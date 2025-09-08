@@ -1,3 +1,4 @@
+// File: src/main/java/com/tradingplatform/userservice/config/SecurityConfiguration.java
 package com.tradingplatform.userservice.config;
 
 import com.tradingplatform.userservice.security.JwtAuthenticationFilter;
@@ -39,19 +40,20 @@ public class SecurityConfiguration {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(req ->
-        req.requestMatchers(
-                        "/**/register",
-                        "/**/login", 
-                        "/**/refresh",
-                        "/**/health",
-                        "/**/actuator/**",
-                        "/**/swagger-ui/**",
-                        "/**/api-docs/**"
+                        req.requestMatchers(
+                                        "/register",
+                                        "/login", 
+                                        "/refresh",
+                                        "/health",
+                                        "/actuator/**",
+                                        "/swagger-ui/**",
+                                        "/v3/api-docs/**",
+                                        "/swagger-ui.html"
+                                )
+                                .permitAll()
+                                .anyRequest()
+                                .authenticated()
                 )
-                .permitAll()
-                .anyRequest()
-                .authenticated()
-)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);

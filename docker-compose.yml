@@ -42,7 +42,7 @@ services:
       - DATABASE_PASSWORD=trading_password
       - REDIS_HOST=redis
       - REDIS_PORT=6379
-      - JWT_SECRET=mySecretKey123!@#MyVeryLongSecretKeyForJWTTokenGeneration
+      - JWT_SECRET=bXlTZWNyZXRLZXkxMjNNeVZlcnlMb25nU2VjcmV0S2V5Rm9ySlRUT2tlbkdlbmVyYXRpb24=
     ports:
       - '8081:8080'
     depends_on:

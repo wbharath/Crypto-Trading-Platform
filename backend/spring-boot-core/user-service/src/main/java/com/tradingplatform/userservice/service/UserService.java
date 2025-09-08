@@ -1,3 +1,6 @@
+// File: src/main/java/com/tradingplatform/userservice/service/UserService.java
+// Updated version without TwoFactorService dependency
+
 package com.tradingplatform.userservice.service;
 
 import com.tradingplatform.userservice.dto.*;
@@ -21,7 +24,6 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
-    private final TwoFactorService twoFactorService;
     
     public AuthResponseDto register(UserRegistrationDto request) {
         log.info("Attempting to register user with email: {}", request.getEmail());
@@ -61,15 +63,6 @@ public class UserService {
         
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new InvalidCredentialsException("Invalid credentials");
-        }
-        
-        // Check 2FA if enabled
-        if (user.getTwoFactorEnabled() && request.getTwoFactorCode() != null) {
-            if (!twoFactorService.verifyCode(user, request.getTwoFactorCode())) {
-                throw new InvalidCredentialsException("Invalid 2FA code");
-            }
-        } else if (user.getTwoFactorEnabled()) {
-            throw new IllegalArgumentException("2FA code required");
         }
         
         String accessToken = jwtService.generateToken(user);
@@ -122,17 +115,6 @@ public class UserService {
         log.info("Profile updated for user: {}", user.getId());
         
         return mapToUserProfileDto(user);
-    }
-    
-    public TwoFactorSetupDto enableTwoFactor(String token) {
-        User user = getUserFromToken(token);
-        return twoFactorService.generateSetup(user);
-    }
-    
-    public void verifyTwoFactor(String token, String code) {
-        User user = getUserFromToken(token);
-        twoFactorService.verifyAndEnable(user, code);
-        log.info("2FA enabled for user: {}", user.getId());
     }
     
     private User getUserFromToken(String token) {

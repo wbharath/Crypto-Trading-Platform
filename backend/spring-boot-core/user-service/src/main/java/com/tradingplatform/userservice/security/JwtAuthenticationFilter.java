@@ -1,4 +1,3 @@
-// File: src/main/java/com/tradingplatform/userservice/security/JwtAuthenticationFilter.java
 package com.tradingplatform.userservice.security;
 
 import jakarta.servlet.FilterChain;
