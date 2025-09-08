@@ -1,0 +1,59 @@
+# .dockerignore file for User Service
+# Place this in: backend/spring-boot-core/user-service/.dockerignore
+
+# Maven build outputs
+target/
+!target/*.jar
+
+# Compiled class files
+*.class
+
+# Log files
+*.log
+*.tmp
+*.temp
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Version control
+.git
+.gitignore
+.svn
+
+# Documentation
+README.md
+*.md
+
+# Docker files (avoid recursion)
+Dockerfile
+.dockerignore
+
+# Maven wrapper jar (we install Maven in container)
+.mvn/wrapper/maven-wrapper.jar
+
+# Environment files
+.env
+.env.local
+.env.production
+
+# Test reports
+test-results/
+coverage/
+
+# Temporary files
+tmp/
+temp/

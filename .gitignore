@@ -1,0 +1,261 @@
+# .gitignore for Crypto Trading Platform
+
+# ===========================
+# Environment & Secrets
+# ===========================
+.env
+.env.local
+.env.production
+.env.staging
+*.key
+*.pem
+*.p12
+*.jks
+
+# ===========================
+# Docker & Infrastructure
+# ===========================
+# Don't ignore docker-compose.yml - we want that
+# But ignore any local overrides
+docker-compose.override.yml
+docker-compose.local.yml
+
+# ===========================
+# Java / Spring Boot
+# ===========================
+backend/spring-boot-core/*/target/
+backend/spring-boot-core/*/.mvn/wrapper/maven-wrapper.jar
+backend/spring-boot-core/*/.mvn/wrapper/maven-wrapper.properties
+backend/spring-boot-core/*/mvnw
+backend/spring-boot-core/*/mvnw.cmd
+
+# Spring Boot
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# Compiled class files
+*.class
+
+# Log files
+*.log
+logs/
+spring.log
+
+# ===========================
+# Python / FastAPI
+# ===========================
+backend/python-services/*/__pycache__/
+backend/python-services/*/*.py[cod]
+backend/python-services/*/*$py.class
+backend/python-services/*/venv/
+backend/python-services/*/env/
+backend/python-services/*/.venv/
+backend/python-services/*/.env/
+backend/python-services/*/pip-log.txt
+backend/python-services/*/pip-delete-this-directory.txt
+backend/python-services/*/.pytest_cache/
+backend/python-services/*/.coverage
+backend/python-services/*/htmlcov/
+backend/python-services/*/.mypy_cache/
+backend/python-services/*/.dmypy.json
+backend/python-services/*/dmypy.json
+
+# ===========================
+# Node.js / React
+# ===========================
+frontend/*/node_modules/
+frontend/*/npm-debug.log*
+frontend/*/yarn-debug.log*
+frontend/*/yarn-error.log*
+frontend/*/.pnpm-debug.log*
+frontend/*/.next/
+frontend/*/out/
+frontend/*/build/
+frontend/*/dist/
+frontend/*/.cache/
+frontend/*/.vercel/
+frontend/*/.env.local
+frontend/*/.env.development.local
+frontend/*/.env.test.local
+frontend/*/.env.production.local
+
+# ===========================
+# IDE & Editor Files
+# ===========================
+# IntelliJ IDEA
+.idea/
+*.iws
+*.iml
+*.ipr
+
+# VS Code
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# Eclipse
+.metadata
+bin/
+tmp/
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.settings/
+.loadpath
+.recommenders
+.project
+.classpath
+
+# Vim
+*.swp
+*.swo
+*~
+
+# Emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
+
+# ===========================
+# Operating System
+# ===========================
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+[Dd]esktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# ===========================
+# Database & Cache
+# ===========================
+*.sqlite
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+
+# ===========================
+# Terraform
+# ===========================
+infrastructure/terraform/**/.terraform/
+infrastructure/terraform/**/.terraform.lock.hcl
+infrastructure/terraform/**/terraform.tfstate
+infrastructure/terraform/**/terraform.tfstate.*
+infrastructure/terraform/**/terraform.tfvars
+infrastructure/terraform/**/terraform.tfvars.json
+infrastructure/terraform/**/*.tfplan
+infrastructure/terraform/**/*.tfstate
+infrastructure/terraform/**/crash.log
+infrastructure/terraform/**/override.tf
+infrastructure/terraform/**/override.tf.json
+infrastructure/terraform/**/*_override.tf
+infrastructure/terraform/**/*_override.tf.json
+
+# ===========================
+# CI/CD & Testing
+# ===========================
+# Test reports
+tests/reports/
+tests/results/
+coverage/
+*.coverage
+htmlcov/
+.nyc_output/
+.coverage.*
+
+# ===========================
+# Temporary & Cache Files
+# ===========================
+*.tmp
+*.temp
+cache/
+.cache/
+tmp/
+temp/
+
+# ===========================
+# Documentation Generated Files
+# ===========================
+docs/build/
+docs/_build/
+site/
+
+# ===========================
+# Application Specific
+# ===========================
+# Trading platform specific ignores
+# Market data cache files
+data/cache/
+data/temp/
+
+# User uploaded files (if any)
+uploads/
+user-data/
+
+# Generated API docs
+api-docs/generated/
+
+# ===========================
+# Keep Important Files
+# ===========================
+# Make sure we don't ignore these important files:
+!docker-compose.yml
+!Dockerfile
+!**/Dockerfile
+!README.md
+!**/README.md
+!LICENSE
+!.github/
+!docs/*.md
+!**/requirements.txt
+!**/package.json
+!**/pom.xml

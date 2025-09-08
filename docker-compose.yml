@@ -1,0 +1,96 @@
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: trading-postgres
+    environment:
+      POSTGRES_DB: trading_platform
+      POSTGRES_USER: trading_user
+      POSTGRES_PASSWORD: trading_password
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backend/shared/sql:/docker-entrypoint-initdb.d
+    networks:
+      - trading-network
+    restart: unless-stopped
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: trading-redis
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis_data:/data
+    networks:
+      - trading-network
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+
+  # User Service (Spring Boot)
+  user-service:
+    build:
+      context: ./backend/spring-boot-core/user-service
+      dockerfile: Dockerfile
+    container_name: trading-user-service
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - DATABASE_URL=jdbc:postgresql://postgres:5432/trading_platform
+      - DATABASE_USERNAME=trading_user
+      - DATABASE_PASSWORD=trading_password
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - JWT_SECRET=mySecretKey123!@#MyVeryLongSecretKeyForJWTTokenGeneration
+    ports:
+      - '8081:8080'
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - trading-network
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:8080/api/users/health']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # pgAdmin (Database Management Tool)
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: trading-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@trading.com
+      PGADMIN_DEFAULT_PASSWORD: admin123
+    ports:
+      - '5050:80'
+    depends_on:
+      - postgres
+    networks:
+      - trading-network
+    restart: unless-stopped
+
+  # Redis Commander (Redis Management Tool)
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: trading-redis-commander
+    environment:
+      REDIS_HOSTS: local:redis:6379
+    ports:
+      - '8082:8081'
+    depends_on:
+      - redis
+    networks:
+      - trading-network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  trading-network:
+    driver: bridge
