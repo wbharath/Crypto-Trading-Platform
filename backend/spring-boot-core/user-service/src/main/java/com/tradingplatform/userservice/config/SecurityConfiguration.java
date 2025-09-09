@@ -1,4 +1,4 @@
-// File: src/main/java/com/tradingplatform/userservice/config/SecurityConfiguration.java
+
 package com.tradingplatform.userservice.config;
 
 import com.tradingplatform.userservice.security.JwtAuthenticationFilter;

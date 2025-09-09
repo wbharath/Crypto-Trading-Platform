@@ -103,7 +103,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
     
-    // Error response classes
+   
     public record ErrorResponse(
             String code,
             String message,

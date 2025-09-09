@@ -1,5 +1,3 @@
-// File: src/main/java/com/tradingplatform/userservice/service/UserService.java
-// Updated version without TwoFactorService dependency
 
 package com.tradingplatform.userservice.service;
 
