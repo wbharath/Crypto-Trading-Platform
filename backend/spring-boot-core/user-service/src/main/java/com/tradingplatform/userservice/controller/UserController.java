@@ -1,6 +1,3 @@
-// File: src/main/java/com/tradingplatform/userservice/controller/UserController.java
-// Fixed version with proper request mapping
-
 package com.tradingplatform.userservice.controller;
 
 import com.tradingplatform.userservice.dto.*;
