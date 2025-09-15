@@ -35,31 +35,37 @@ public class SecurityConfiguration {
     private final UserDetailsService userDetailsService;
     
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .csrf(AbstractHttpConfigurer::disable)
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .authorizeHttpRequests(req ->
-                        req.requestMatchers(
-                                        "/register",
-                                        "/login", 
-                                        "/refresh",
-                                        "/health",
-                                        "/actuator/**",
-                                        "/swagger-ui/**",
-                                        "/v3/api-docs/**",
-                                        "/swagger-ui.html"
-                                )
-                                .permitAll()
-                                .anyRequest()
-                                .authenticated()
-                )
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authenticationProvider(authenticationProvider())
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
-        
-        return http.build();
-    }
+public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    http
+            .csrf(AbstractHttpConfigurer::disable)
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+            .authorizeHttpRequests(req ->
+                    req.requestMatchers(
+                                    "/api/users/register",           // Add context path
+                                    "/api/users/login",              // Add context path
+                                    "/api/users/refresh",            // Add context path
+                                    "/api/users/health",             // Add context path
+                                    "/api/users/actuator/**",        // Add context path
+                                    "/actuator/**",                  // Keep both
+                                    "/register",                     // Keep existing
+                                    "/login", 
+                                    "/refresh",
+                                    "/health",
+                                    "/swagger-ui/**",
+                                    "/v3/api-docs/**",
+                                    "/swagger-ui.html"
+                            )
+                            .permitAll()
+                            .anyRequest()
+                            .authenticated()
+            )
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .authenticationProvider(authenticationProvider())
+            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+    
+    return http.build();
+}
+    
     
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {

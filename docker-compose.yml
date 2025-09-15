@@ -52,7 +52,36 @@ services:
       - trading-network
     restart: unless-stopped
     healthcheck:
-      test: ['CMD', 'curl', '-f', 'http://localhost:8080/api/users/health']
+      test: ['CMD', 'curl', '-f', 'http://localhost:8080/health']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # Market Data Service (FastAPI/Python)
+  market-data-service:
+    build:
+      context: ./backend/python-services/market-data
+      dockerfile: Dockerfile
+    container_name: trading-market-data
+    environment:
+      - ENVIRONMENT=docker
+      - DATABASE_URL=postgresql://trading_user:trading_password@postgres:5432/trading_platform
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_URL=redis://redis:6379/0
+      - LOG_LEVEL=INFO
+    ports:
+      - '8083:8000'
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - trading-network
+    restart: unless-stopped
+    healthcheck:
+      test:
+        ['CMD', 'curl', '-f', 'http://localhost:8080/api/users/actuator/health']
       interval: 30s
       timeout: 10s
       retries: 3
