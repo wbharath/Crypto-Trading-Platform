@@ -27,7 +27,7 @@ class Settings(BaseSettings):
     exchanges: List[str] = ["binance", "coinbasepro", "kraken"]
     default_symbols: List[str] = [
         "BTC/USDT", "ETH/USDT", "ADA/USDT", "DOT/USDT", 
-        "LINK/USDT", "SOL/USDT", "AVAX/USDT", "MATIC/USDT"
+        "LINK/USDT", "SOL/USDT", "AVAX/USDT"
     ]
     
     # API Rate limiting

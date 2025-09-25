@@ -57,6 +57,38 @@ async def get_price(
         logger.error(f"Error getting price for {symbol}: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
+@router.get("/price/{base}/{quote}", response_model=PriceResponse)
+async def get_price_by_pair(
+    base: str,
+    quote: str,
+    redis_service = Depends(get_redis_service)
+):
+    """Get current price for a specific trading pair (e.g., /price/BTC/USDT)"""
+    try:
+        # Construct full symbol from base and quote currencies
+        symbol = f"{base.upper()}/{quote.upper()}"
+        
+        # Get price from Redis cache
+        price_data = await redis_service.get_price(symbol)
+        
+        if not price_data:
+            raise HTTPException(
+                status_code=404,
+                detail=f"Price data not found for {symbol}"
+            )
+        
+        return PriceResponse(
+            symbol=symbol,
+            data=price_data,
+            cached_at=price_data.get("cached_at")
+        )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error getting price for {base}/{quote}: {e}")
+        raise HTTPException(status_code=500, detail="Internal server error")
+
 @router.get("/prices", response_model=MultiPriceResponse)
 async def get_all_prices(
     symbols: Optional[str] = None,
