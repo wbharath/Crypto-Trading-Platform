@@ -252,6 +252,7 @@ class DataCollector:
         except Exception as e:
             logger.error(f"Failed to collect market data for {symbol} from {exchange_name}: {e}")
     
+    
     async def _update_best_price(self, symbol: str):
         """Calculate and store the best price across all exchanges"""
         try:
@@ -259,44 +260,50 @@ class DataCollector:
             best_ask = float('inf')
             best_price_data = None
             exchange_prices = []
-            
+        
             # Get prices from all exchanges for this symbol
             for exchange_name in self.exchanges.keys():
                 exchange_data = await self.redis_service.get_exchange_data(exchange_name, symbol)
                 
                 if exchange_data:
                     exchange_prices.append(exchange_data)
-                    
-                    # Track best bid (highest) and ask (lowest)
-                    if exchange_data.get('bid', 0) > best_bid:
-                        best_bid = exchange_data['bid']
-                    
-                    if exchange_data.get('ask', float('inf')) < best_ask:
-                        best_ask = exchange_data['ask']
+                
+                    # Track best bid (highest) - Fix null comparison
+                    bid_price = exchange_data.get('bid')
+                    if bid_price is not None and bid_price > best_bid:
+                        best_bid = bid_price
+                
+                    # Track best ask (lowest) - Fix null comparison  
+                    ask_price = exchange_data.get('ask')
+                    if ask_price is not None and ask_price < best_ask:
+                        best_ask = ask_price
                         best_price_data = exchange_data
-            
+        
             if best_price_data:
                 # Create consolidated price data
-                avg_price = sum(p['price'] for p in exchange_prices) / len(exchange_prices)
-                total_volume = sum(p.get('volume', 0) for p in exchange_prices)
+                valid_prices = [p['price'] for p in exchange_prices if p.get('price') is not None]
+                if valid_prices:
+                    avg_price = sum(valid_prices) / len(valid_prices)
+                    total_volume = sum(p.get('volume', 0) for p in exchange_prices if p.get('volume') is not None)
                 
-                best_price = {
-                    'symbol': symbol,
-                    'price': avg_price,
-                    'best_bid': best_bid,
-                    'best_ask': best_ask,
-                    'spread': best_ask - best_bid,
-                    'volume_24h': total_volume,
-                    'exchange_count': len(exchange_prices),
-                    'exchanges': [p['exchange'] for p in exchange_prices],
-                    'timestamp': datetime.now().isoformat()
-                }
+                    best_price = {
+
+                        'symbol': symbol,
+                        'price': avg_price,
+                        'best_bid': best_bid if best_bid > 0 else None,
+                        'best_ask': best_ask if best_ask < float('inf') else None,
+                        'spread': (best_ask - best_bid) if (best_ask < float('inf') and best_bid > 0) else None,
+                        'volume_24h': total_volume,
+                        'exchange_count': len(exchange_prices),
+                        'exchanges': [p['exchange'] for p in exchange_prices],
+                        'timestamp': datetime.now().isoformat()
+                    }
                 
-                # Store best price
-                await self.redis_service.set_price(symbol, best_price)
+                    # Store best price
+                    await self.redis_service.set_price(symbol, best_price)
                 
-                # Publish price update for WebSocket clients
-                await self.redis_service.publish_price_update(symbol, best_price)
+                    # Publish price update for WebSocket clients
+                    await self.redis_service.publish_price_update(symbol, best_price)
                 
         except Exception as e:
             logger.error(f"Failed to update best price for {symbol}: {e}")
